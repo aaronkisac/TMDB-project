@@ -1,8 +1,7 @@
-import { Search, ListItems } from "components";
+import { ListItems } from "components";
 export function HomePage() {
   return (
     <>
-      <Search />
       <ListItems />
     </>
   );

@@ -3,7 +3,6 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import Button from "@material-ui/core/Button";
@@ -19,8 +18,9 @@ import { StyledForm, Wrapper } from "./Search.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSearch, setSearchType } from "store/actions/storeActions";
 import { ACTION_TYPES } from "store/reducers/storeReducer";
-const options2 = [
-  { id: "multi", label: "Multi" },
+import { useHistory } from "react-router-dom";
+const options = [
+  { id: "multi", label: "All" },
   { id: "movie", label: "Movie" },
   { id: "tv", label: "TV" },
   { id: "person", label: "Person" },
@@ -37,8 +37,14 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   menu: { width: "120px", marginTop: "5px" },
+
+  searchMenu: { width: "100%" },
+
   submitButton: {
     margin: "0 10px",
+  },
+  searchGrid: {
+    position: "relative",
   },
   search: {
     position: "relative",
@@ -82,24 +88,57 @@ export const useStyles = makeStyles((theme) => ({
 export const Search = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { searchResult } = useSelector((store) => store);
+  const history = useHistory();
+  const { dataSearchMenu, searchPage } = useSelector(
+    (store) => store.searchResult
+  );
   const [open, setOpen] = useState(false);
+  const [openSearchMenu, setOpenSearchMenu] = useState(false);
   const anchorRef = useRef(null);
   const type = ACTION_TYPES.SET_SEARCH;
   const [selectedQuery, setSelectedQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [selectedItem, setSelectedItem] = useState("multi");
+  const [optionsSearch, setOptionsSearch] = useState([]);
 
-  console.log("​HomePage -> ", searchResult);
   const params = useMemo(
     () => ({
       url: `search/${selectedItem}`,
-      query: selectedQuery,
-      page: 1,
+      query: selectedQuery || searchInput,
+      page: searchPage,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedQuery, selectedItem]
+    [selectedQuery, selectedItem, searchPage, searchInput]
   );
+
+  const paramsForSearchMenu = useMemo(
+    () => ({
+      url: `search/${selectedItem}`,
+      query: searchInput,
+      page: searchPage,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedItem, searchInput, searchPage]
+  );
+
+  useEffect(() => {
+    dataSearchMenu.length &&
+      setOptionsSearch(
+        selectedItem === "multi"
+          ? dataSearchMenu?.slice(0, 12)
+          : dataSearchMenu?.slice(0, 12).map((item) => ({
+              ...item,
+              media_type: selectedItem,
+            }))
+      );
+  }, [dataSearchMenu, selectedItem]);
+
+  useEffect(() => {
+    const searchInputLength = searchInput.split("").length;
+    searchInputLength > 4 &&
+      dispatch(fetchSearch("SET_SEARCH_MENU", paramsForSearchMenu));
+    searchInputLength > 4 ? setOpenSearchMenu(true) : setOpenSearchMenu(false);
+  }, [dispatch, paramsForSearchMenu, searchInput, type]);
 
   useEffect(() => {
     selectedQuery && dispatch(fetchSearch(type, params));
@@ -108,12 +147,20 @@ export const Search = () => {
   const handleClick = (e) => {
     e?.preventDefault();
     setSelectedQuery(searchInput);
+    history.push("/");
+    setSearchInput("");
   };
 
   const handleMenuItemClick = (event, item) => {
     setSelectedItem(item);
     dispatch(setSearchType("SET_SEARCH_TYPE", item));
     setOpen(false);
+  };
+
+  const handleMenuItemClickForSearchMenu = (id, type) => {
+    setOpenSearchMenu(false);
+    history.push(`/${type}/${id}`);
+    setSearchInput("");
   };
 
   const handleToggle = () => {
@@ -126,6 +173,14 @@ export const Search = () => {
     }
     setOpen(false);
   };
+
+  const handleCloseForSearchMenu = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpenSearchMenu(false);
+  };
+
   const handleChange = (e) => {
     setSearchInput(e.target.value);
   };
@@ -137,12 +192,16 @@ export const Search = () => {
           <StyledForm>
             <Grid container alignItems="center">
               <Grid item xs={1}>
-                <Typography className={classes.title} variant="h6">
+                <MenuItem
+                  onClick={() => history.push("/")}
+                  className={classes.title}
+                  variant="h6"
+                >
                   TMDB
-                </Typography>
+                </MenuItem>
               </Grid>
 
-              <Grid item xs={1}>
+              <Grid item xs={2}>
                 <ButtonGroup
                   variant="contained"
                   color="primary"
@@ -150,7 +209,7 @@ export const Search = () => {
                   aria-label="split button"
                 >
                   <Button onClick={handleToggle}>
-                    {options2.find((item) => item.id === selectedItem).label}
+                    {options.find((item) => item.id === selectedItem).label}
                   </Button>
                   <Button
                     color="primary"
@@ -187,10 +246,9 @@ export const Search = () => {
                             className={classes.menu}
                             id="split-button-menu"
                           >
-                            {options2.map((option) => (
+                            {options.map((option) => (
                               <MenuItem
                                 key={option.id}
-                                selected={option.id === selectedItem}
                                 onClick={(event) =>
                                   handleMenuItemClick(event, option.id)
                                 }
@@ -205,13 +263,15 @@ export const Search = () => {
                   )}
                 </Popper>
               </Grid>
-              <Grid item xs={9}>
+              <Grid item xs={8} className={classes.searchGrid}>
                 <div className={classes.search}>
                   <div className={classes.searchIcon}>
                     <SearchIcon />
                   </div>
                   <InputBase
+                    autoFocus
                     placeholder="Search for a movie, tv show, person......"
+                    value={searchInput}
                     classes={{
                       root: classes.inputRoot,
                       input: classes.inputInput,
@@ -220,6 +280,52 @@ export const Search = () => {
                     inputProps={{ "aria-label": "search" }}
                   />
                 </div>
+                <Popper
+                  open={openSearchMenu}
+                  anchorEl={anchorRef.current}
+                  role={undefined}
+                  transition
+                  disablePortal
+                  className={classes.searchMenu}
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin:
+                          placement === "bottom"
+                            ? "center top"
+                            : "center bottom",
+                      }}
+                    >
+                      <Paper>
+                        <ClickAwayListener
+                          onClickAway={handleCloseForSearchMenu}
+                        >
+                          <MenuList
+                            className={classes.menu2}
+                            id="split-button-menu"
+                          >
+                            {optionsSearch.map((option) => (
+                              <MenuItem
+                                key={option.id}
+                                selected={option.id === selectedItem}
+                                onClick={() =>
+                                  handleMenuItemClickForSearchMenu(
+                                    option.id,
+                                    option.media_type
+                                  )
+                                }
+                              >
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
               </Grid>
               <Grid item xs={1}>
                 <Button

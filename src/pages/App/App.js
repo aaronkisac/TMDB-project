@@ -13,7 +13,6 @@ export function App() {
     searchResult.searchList?.results?.length > 0
       ? searchResult.searchList?.results[0]?.id
       : "";
-  console.log("​App -> id", id);
 
   const params = useMemo(
     () => ({
@@ -23,8 +22,7 @@ export function App() {
     }),
     []
   );
-  console.log("​App -> store", searchResult);
-  //
+
   useEffect(() => {
     dispatch(fetchSearch(type, params));
   }, [dispatch, params, type]);

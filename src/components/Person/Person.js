@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -21,9 +21,11 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 1000,
   },
   image: {
+    position: "unset",
     maxWidth: 300,
     maxHeight: 450,
   },
+  biography: { cursor: "pointer" },
   img: {
     margin: "auto",
     display: "block",
@@ -39,10 +41,10 @@ export function Person() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const { dataDetails } = useSelector((store) => store.searchResult);
-  console.log("​Show -> dataDetails", dataDetails);
   const type = ACTION_TYPES.SET_DETAILS;
   const type2 = ACTION_TYPES.SET_CREDITS;
   const { API_KEY, IMAGE_URL } = Constants;
+  const [isMore, setIsMore] = useState(false);
 
   const params = useMemo(
     () => ({
@@ -83,9 +85,6 @@ export function Person() {
                     : "/images/Not-available4.png"
                 }
               />
-              {console.log(
-                `${IMAGE_URL}w500${dataDetails.profile_path}?api_key=${API_KEY}`
-              )}
             </ButtonBase>
           </Grid>
           <Grid item xs={12} sm container>
@@ -99,15 +98,23 @@ export function Person() {
                 <Typography variant="body2" gutterBottom>
                   Biography
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {dataDetails.biography}
+                <Typography
+                  className={classes.biography}
+                  onClick={() => {
+                    setIsMore(!isMore);
+                  }}
+                  variant="body2"
+                  color="textSecondary"
+                >
+                  {dataDetails?.biography?.length < 500 || isMore
+                    ? dataDetails?.biography
+                    : `${dataDetails?.biography
+                        ?.split("")
+                        .slice(0, 500)
+                        .join("")}......More`}
                 </Typography>
               </Grid>
-              <Grid item>
-                {/* <Typography variant="body2" style={{ cursor: "pointer" }}>
-                  Remove
-                </Typography> */}
-              </Grid>
+              <Grid item></Grid>
             </Grid>
           </Grid>
         </Grid>

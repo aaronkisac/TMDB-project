@@ -1,9 +1,8 @@
-import React from "react";
+import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,9 +20,11 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 1000,
   },
   image: {
+    position: "unset",
     maxWidth: 300,
     maxHeight: 450,
   },
+  overview: { cursor: "pointer" },
   img: {
     margin: "auto",
     display: "block",
@@ -39,10 +40,10 @@ export function Show() {
   const dispatch = useDispatch();
   const { id, show } = useParams();
   const { dataDetails } = useSelector((store) => store.searchResult);
-  console.log("​Show -> dataDetails", dataDetails);
   const type = ACTION_TYPES.SET_DETAILS;
   const type2 = ACTION_TYPES.SET_CREDITS;
   const { API_KEY, IMAGE_URL } = Constants;
+  const [isMore, setIsMore] = useState(false);
 
   const params = useMemo(
     () => ({
@@ -73,7 +74,7 @@ export function Show() {
       <Paper className={classes.paper}>
         <Grid container spacing={2}>
           <Grid item>
-            <ButtonBase className={classes.image}>
+            <div className={classes.image}>
               <img
                 className={classes.img}
                 alt="complex"
@@ -83,16 +84,13 @@ export function Show() {
                     : "/images/Not-available4.png"
                 }
               />
-              {console.log(
-                `${IMAGE_URL}w500${dataDetails.poster_path}?api_key=${API_KEY}`
-              )}
-            </ButtonBase>
+            </div>
           </Grid>
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
                 <Typography gutterBottom variant="subtitle1">
-                  {dataDetails.name || dataDetails.title}
+                  {dataDetails?.name || dataDetails?.title}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {dataDetails?.genres?.reduce(
@@ -102,29 +100,37 @@ export function Show() {
                   )}
                   {" - "}
                   {show === "movie"
-                    ? dataDetails.runtime
-                    : dataDetails.episode_run_time}
+                    ? dataDetails?.runtime
+                    : dataDetails?.episode_run_time}
                   mins
                 </Typography>
                 <br />
                 <Typography variant="body2" gutterBottom>
                   Overview
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {dataDetails.overview}
+                <Typography
+                  className={classes.overview}
+                  onClick={() => {
+                    setIsMore(!isMore);
+                  }}
+                  variant="body2"
+                  color="textSecondary"
+                >
+                  {dataDetails?.overview?.length < 500 || isMore
+                    ? dataDetails?.overview
+                    : `${dataDetails?.overview
+                        ?.split("")
+                        .slice(0, 500)
+                        .join("")}......More`}
                 </Typography>
               </Grid>
-              <Grid item>
-                {/* <Typography variant="body2" style={{ cursor: "pointer" }}>
-                  Remove
-                </Typography> */}
-              </Grid>
+              <Grid item></Grid>
             </Grid>
             <Grid item>
               <Typography variant="subtitle1">
                 {new Date(
-                  dataDetails.first_air_date || dataDetails.release_date
-                ).getFullYear()}
+                  dataDetails?.first_air_date || dataDetails?.release_date
+                )?.getFullYear()}
               </Typography>
             </Grid>
           </Grid>

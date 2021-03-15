@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
@@ -10,9 +10,11 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { useHistory, useParams } from "react-router-dom";
-
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 const useStyles = makeStyles((theme) => ({
   root: {
+    marginTop: 30,
+    position: "unset",
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-around",
@@ -26,6 +28,15 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 400,
     margin: "10px 10px",
     boxShadow: "0 2px 8px rgb(0 0 0 / 10%)",
+    alignText: "center",
+  },
+  lastCardText: { fontSize: 30 },
+  lastCard: {
+    textAlign: "center",
+    cursor: "pointer",
+    width: "200px!important",
+    height: "auto!important",
+    paddingTop: "50px!important",
   },
   media: { margin: "0", borderRadius: "8px", width: "100%" },
   gridList: {
@@ -49,68 +60,83 @@ export function Credits() {
   const { API_KEY, IMAGE_URL } = Constants;
   const history = useHistory();
   const classes = useStyles();
-  const { id, show } = useParams();
-  console.log("​Credits -> id, show, person ", id, show);
-
-  const { cast } = useSelector((store) => {
-    console.log(store);
-    return store.searchResult.dataCredits;
-  });
-  console.log("credits -> searchType", cast);
+  const { show } = useParams();
+  const { dataCredits } = useSelector((store) => store.searchResult);
+  const [creditsCount, setCreditsCount] = useState(10);
   const handleDetailsPage = (page, id) => {
     history.push(`/${page}/${id}`);
   };
+
   return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={2}>
-        {cast?.slice(0, 10)?.map((tile) => {
-          let imgPath = "";
-          let name = "";
-          if (show) {
-            imgPath = tile.profile_path;
-            name = tile.name;
-          } else {
-            imgPath = tile.poster_path;
-            name = tile.title;
-          }
-          return (
-            <GridListTile
-              onClick={() => {
-                handleDetailsPage(show ? "person" : tile.media_type, tile.id);
-              }}
-              className={classes.list}
-              key={tile.id}
-            >
-              <Card className={classes.card}>
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    alt={tile.name}
-                    className={classes.media}
-                    image={
-                      imgPath
-                        ? `${IMAGE_URL}w185${imgPath}?api_key=${API_KEY}`
-                        : "/images/Not-available4.png"
-                    }
-                    title={tile.name}
-                  />
-                  <CardContent className={classes.textBox}>
-                    <Typography className={classes.text} gutterBottom>
-                      {name}
-                    </Typography>
-                    <Typography
-                      className={classes.text}
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      {tile.character || `${tile.total_episode_count} Episodes`}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>{" "}
-            </GridListTile>
-          );
-        })}
+        {dataCredits.length &&
+          dataCredits?.slice(0, creditsCount).map((tile) => {
+            let imgPath = "";
+            let name = "";
+            let details = "";
+            if (show) {
+              imgPath = tile.profile_path;
+              name = tile.name || tile.title;
+              details = `${tile.total_episode_count} Episodes`;
+            } else {
+              imgPath = tile.poster_path;
+              name = tile.name;
+              details = tile.character;
+            }
+            return (
+              <GridListTile
+                onClick={() => {
+                  handleDetailsPage(show ? "person" : tile.media_type, tile.id);
+                }}
+                className={classes.list}
+                key={tile.id}
+              >
+                <Card className={classes.card}>
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      alt={tile.name}
+                      className={classes.media}
+                      image={
+                        imgPath
+                          ? `${IMAGE_URL}w185${imgPath}?api_key=${API_KEY}`
+                          : "/images/Not-available4.png"
+                      }
+                      title={tile.name}
+                    />
+                    <CardContent className={classes.textBox}>
+                      <Typography className={classes.text} gutterBottom>
+                        {name||""}
+                      </Typography>
+                      <Typography
+                        className={classes.text}
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        {details||""}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </GridListTile>
+            );
+          })}
+        {dataCredits.length > creditsCount ? (
+          <GridListTile
+            className={classes.lastCard}
+            onClick={() => {
+              setCreditsCount(creditsCount + 10);
+            }}
+          >
+            <Typography className={classes.lastCardText} gutterBottom>
+              View More
+            </Typography>
+            <ArrowForwardIosIcon style={{ fontSize: 200 }} />
+          </GridListTile>
+        ) : (
+          ""
+        )}
       </GridList>
     </div>
   );
