@@ -5,5 +5,6 @@ export const Wrapper = styled.div`
 `;
 export const StyledForm = styled.form`
   width: 100%;
-  margin: 0 20px;
+  margin: 0 auto;
+  max-width: 1000px;
 `;

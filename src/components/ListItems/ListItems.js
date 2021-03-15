@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
     position: "unset",
     width: "70%",
     minWidth: theme.spacing(70),
+    maxWidth: theme.spacing(150),
   },
   pagination: {
     position: "unset",
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     cursor: "pointer",
     position: "unset",
+    "&:hover": { boxShadow: "0 2px 8px rgb(0 0 0 / 20%)" },
   },
   inline: {
     display: "inline",
@@ -78,7 +80,7 @@ export function ListItems() {
           (currentPage * rowsPerPage) % 20,
           ((currentPage * rowsPerPage) % 20) + rowsPerPage
         )
-        ?.map((item) => {
+        ?.map((item, index) => {
           let name = "";
           let imgUrl = "";
           let overView = "";
@@ -114,6 +116,7 @@ export function ListItems() {
                 onClick={() => handleDetailsPage(type, item.id)}
                 className={classes.listItem}
                 alignItems="flex-start"
+                key={`key-${index}-${item.id}`}
               >
                 <ListItemAvatar>
                   <Avatar

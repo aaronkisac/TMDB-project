@@ -26,17 +26,23 @@ const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: 200,
     maxHeight: 400,
-    margin: "10px 10px",
+    margin: "10px",
     boxShadow: "0 2px 8px rgb(0 0 0 / 10%)",
-    alignText: "center",
+    textAlign: "center",
+    "&:hover": { boxShadow: "0 2px 8px rgb(0 0 0 / 50%)" },
   },
-  lastCardText: { fontSize: 30 },
+  lastCardText: {
+    fontSize: 30,
+  },
   lastCard: {
     textAlign: "center",
     cursor: "pointer",
+    margin: "10px",
     width: "200px!important",
-    height: "auto!important",
+    height: "342px!important",
     paddingTop: "50px!important",
+    borderRadius: "8px",
+    "&:hover": { boxShadow: "0 2px 8px rgb(0 0 0 / 50%)" },
   },
   media: { margin: "0", borderRadius: "8px", width: "100%" },
   gridList: {
@@ -71,7 +77,7 @@ export function Credits() {
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={2}>
         {dataCredits.length &&
-          dataCredits?.slice(0, creditsCount).map((tile) => {
+          dataCredits?.slice(0, creditsCount).map((tile,index) => {
             let imgPath = "";
             let name = "";
             let details = "";
@@ -90,7 +96,7 @@ export function Credits() {
                   handleDetailsPage(show ? "person" : tile.media_type, tile.id);
                 }}
                 className={classes.list}
-                key={tile.id}
+                key={`key-${index}-${tile.id}`}
               >
                 <Card className={classes.card}>
                   <CardActionArea>
@@ -107,14 +113,14 @@ export function Credits() {
                     />
                     <CardContent className={classes.textBox}>
                       <Typography className={classes.text} gutterBottom>
-                        {name||""}
+                        {name || ""}
                       </Typography>
                       <Typography
                         className={classes.text}
                         color="textSecondary"
                         gutterBottom
                       >
-                        {details||""}
+                        {details || ""}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
@@ -128,6 +134,7 @@ export function Credits() {
             onClick={() => {
               setCreditsCount(creditsCount + 10);
             }}
+            key="button1"
           >
             <Typography className={classes.lastCardText} gutterBottom>
               View More

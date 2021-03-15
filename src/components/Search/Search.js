@@ -38,7 +38,10 @@ export const useStyles = makeStyles((theme) => ({
   },
   menu: { width: "120px", marginTop: "5px" },
 
-  searchMenu: { width: "100%" },
+  searchMenu: {
+    width: "100%",
+    transform: "translate3d(0, 50px, 0px)!important",
+  },
 
   submitButton: {
     margin: "0 10px",
@@ -57,7 +60,6 @@ export const useStyles = makeStyles((theme) => ({
     width: "100%",
     [theme.breakpoints.up("sm")]: {
       margin: "0",
-      //   marginLeft: theme.spacing(3),
       width: "100%",
     },
   },
@@ -75,7 +77,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
