@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+### TMDB Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+About The Project
+This TMDB app created with Create React App, JavaScript, ReactJS HOOKS, Redux, Material UI and The Movie Database (TMDb) API. Create a movie search application that allows a user to search for a movie, tv show or actor and be
+presented with a list of search results. Use the TMDB API to source your data.
 
-## Available Scripts
+![WEATHER-APP](public/images/image1.png)
+![WEATHER-APP](public/images/image2.png)
+![WEATHER-APP](public/images/image3.png)
 
-In the project directory, you can run:
+[Project live link](https://tmdb-project-git-master-harunkisacuk.vercel.app/)
 
-### `yarn start`
+## Contributing
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Contributions, issues and feature requests are welcome! Start by:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- git clone https://github.com/harunkisacuk/TMDB-project
+- Change directory with cd TMDB-project,
+- Run yarn to install dependencies
+- yarn start
+- runs the "app" in dev mode. Open http://localhost:3000 to view it in your browser.
+- I deployed to vercel https://tmdb-project-git-master-harunkisacuk.vercel.app/
 
-### `yarn test`
+yarn test
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
+Unfortunately jest has idiosyncracies re. coverage if nothing test-wise has changed between commits: you'll need to run yarn test --coverage --watchAll=false to see 100% code coverage in the terminal.
+yarn test --coverage will still generate a coverage report in the project's root directory: coverage/lcov-report (reveal in finder to open coverage index.html files)
 
-### `yarn build`
+### Built With
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This project was built using these technologies.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Javascript
+- ReactJS Hooks
+- Redux
+- Styled Component
+- HTML/CSS
+- Atomic Design Pattern
+- Axios
+- Immer
+- Material UI
+- Jest
+- React Testing Library
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+​Harun Kisac
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Github: [@harunkisacuk](https://github.com/harunkisacuk)
+- Linkedin: [Harun Kisac](https://www.linkedin.com/in/harun-kisac/)
+- E-mail: harunk3uk@gmail.com
