@@ -1,15 +1,11 @@
-import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSearch } from "store/actions/storeActions";
-import { ACTION_TYPES } from "store/reducers/storeReducer";
-import Constants from "config/constants";
-import { Credits } from "components";
+
+import { useState } from "react";
+import Casts from "components/Casts";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -35,39 +31,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Show() {
+export default function Show({
+  path,
+  showTitle,
+  showGenres,
+  date,
+  releaseYear,
+  overview,
+  castsList,
+}) {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const { id, show } = useParams();
-  const { dataDetails } = useSelector((store) => store.searchResult);
-  const type = ACTION_TYPES.SET_DETAILS;
-  const type2 = ACTION_TYPES.SET_CREDITS;
-  const { API_KEY, IMAGE_URL } = Constants;
   const [isMore, setIsMore] = useState(false);
-
-  const params = useMemo(
-    () => ({
-      url: `${show}/${id}`,
-      page: 1,
-    }),
-    [id, show]
-  );
-
-  useEffect(() => {
-    id && dispatch(fetchSearch(type, params));
-  }, [dispatch, id, params, type]);
-
-  const params2 = useMemo(
-    () => ({
-      url: `${show}/${id}/${show === "tv" ? "aggregate_credits" : "credits"}`,
-      page: 1,
-    }),
-    [id, show]
-  );
-
-  useEffect(() => {
-    id && dispatch(fetchSearch(type2, params2));
-  }, [dispatch, id, params2, type2]);
+  
+  const details =
+  overview?.length < 500 || isMore
+  ? overview
+  : `${overview?.slice(0, 500)}......More`;
+  
+  function handleMore() {
+    setIsMore(!isMore);
+  }
 
   return (
     <div className={classes.root}>
@@ -75,33 +58,19 @@ export function Show() {
         <Grid container spacing={2}>
           <Grid item>
             <div className={classes.image}>
-              <img
-                className={classes.img}
-                alt="complex"
-                src={
-                  dataDetails.poster_path
-                    ? `${IMAGE_URL}w500${dataDetails.poster_path}?api_key=${API_KEY}`
-                    : "/images/Not-available4.png"
-                }
-              />
+              <img className={classes.img} alt="complex" src={path} />
             </div>
           </Grid>
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
                 <Typography gutterBottom variant="subtitle1">
-                  {dataDetails?.name || dataDetails?.title}
+                  {showTitle}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {dataDetails?.genres?.reduce(
-                    (acc, item, index) =>
-                      acc ? `${acc}, ${item.name}` : item.name,
-                    ""
-                  )}
+                  {showGenres}
                   {" - "}
-                  {show === "movie"
-                    ? dataDetails?.runtime
-                    : dataDetails?.episode_run_time}
+                  {date}
                   mins
                 </Typography>
                 <br />
@@ -110,32 +79,21 @@ export function Show() {
                 </Typography>
                 <Typography
                   className={classes.overview}
-                  onClick={() => {
-                    setIsMore(!isMore);
-                  }}
+                  onClick={handleMore}
                   variant="body2"
                   color="textSecondary"
                 >
-                  {dataDetails?.overview?.length < 500 || isMore
-                    ? dataDetails?.overview
-                    : `${dataDetails?.overview
-                        ?.split("")
-                        .slice(0, 500)
-                        .join("")}......More`}
+                  {details}
                 </Typography>
               </Grid>
               <Grid item></Grid>
             </Grid>
             <Grid item>
-              <Typography variant="subtitle1">
-                {new Date(
-                  dataDetails?.first_air_date || dataDetails?.release_date
-                )?.getFullYear()}
-              </Typography>
+              <Typography variant="subtitle1">{releaseYear}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Credits />
+        <Casts castsList={castsList} />
       </Paper>
     </div>
   );

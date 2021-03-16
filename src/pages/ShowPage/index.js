@@ -1,1 +1,1 @@
-export * from "./ShowPage";
+export {default} from "./ShowPage";

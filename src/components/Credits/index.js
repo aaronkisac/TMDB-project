@@ -1,1 +1,1 @@
-export { Credits } from "./Credits";
+export { default } from "./Credits";

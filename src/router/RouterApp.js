@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Search } from "components";
+import ShowPage from "pages/ShowPage";
+import Search from "components/Search";
+import HomePage from "pages/HomePage";
+import ActorPage from "pages/ActorPage";
 
-import { HomePage, PersonPage, ShowPage } from "pages";
 const RouterApp = () => {
   return (
     <>
@@ -13,7 +15,7 @@ const RouterApp = () => {
             <HomePage />
           </Route>
           <Route exact path="/person/:id">
-            <PersonPage />
+            <ActorPage />
           </Route>
           <Route exact path="/:show/:id">
             <ShowPage />

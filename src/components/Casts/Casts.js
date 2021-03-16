@@ -63,24 +63,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Credits({ creditsList }) {
+export default function Casts({ castsList }) {
   const classes = useStyles();
   const history = useHistory();
   const [creditsCount, setCreditsCount] = useState(10);
+  const isHasCasts = castsList.length;
 
-  const handleDetailsPage = (type, id) => {
-    history.push(`/${type}/${id}`);
+  const handleDetailsPage = (id) => {
+    history.push(`/person/${id}`);
+  };
+
+  const handleMoreCasts = () => {
+    setCreditsCount(creditsCount + 10);
   };
 
   return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={2}>
-        {creditsList.length &&
-          creditsList?.slice(0, creditsCount).map((tile, index) => {
+        {isHasCasts &&
+          castsList?.slice(0, creditsCount).map((tile, index) => {
+            const { imgPath, name, character } = tile;
             return (
               <GridListTile
                 onClick={() => {
-                  handleDetailsPage(tile.type, tile.id);
+                  handleDetailsPage(tile.id);
                 }}
                 className={classes.list}
                 key={`key-${index}-${tile.id}`}
@@ -91,19 +97,19 @@ export default function Credits({ creditsList }) {
                       component="img"
                       alt={tile.name}
                       className={classes.media}
-                      image={tile.imgPath}
+                      image={imgPath}
                       title={tile.name}
                     />
                     <CardContent className={classes.textBox}>
                       <Typography className={classes.text} gutterBottom>
-                        {tile.name}
+                        {name}
                       </Typography>
                       <Typography
                         className={classes.text}
                         color="textSecondary"
                         gutterBottom
                       >
-                        {tile.character}
+                        {character}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
@@ -111,12 +117,10 @@ export default function Credits({ creditsList }) {
               </GridListTile>
             );
           })}
-        {creditsList.length > creditsCount ? (
+        {isHasCasts > creditsCount ? (
           <GridListTile
             className={classes.lastCard}
-            onClick={() => {
-              setCreditsCount(creditsCount + 10);
-            }}
+            onClick={handleMoreCasts}
             key="button1"
           >
             <Typography className={classes.lastCardText} gutterBottom>

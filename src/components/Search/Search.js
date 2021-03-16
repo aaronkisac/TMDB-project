@@ -1,4 +1,3 @@
-import { useMemo, useEffect, useState, useRef } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
@@ -14,11 +13,13 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-import { StyledForm, Wrapper } from "./Search.styles";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSearch, setSearchType } from "store/actions/storeActions";
-import { ACTION_TYPES } from "store/reducers/storeReducer";
+
+import { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSearchData, setSearchType } from "store/actions";
+import { StyledForm, Wrapper } from "./Search.styles";
+
 const options = [
   { id: "multi", label: "All" },
   { id: "movie", label: "Movie" },
@@ -80,47 +81,23 @@ export const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "120ch",
-    },
   },
 }));
 
-export const Search = () => {
+const Search = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const { dataSearchMenu, searchPage } = useSelector(
-    (store) => store.searchResult
+    (store) => store.storeData
   );
   const [open, setOpen] = useState(false);
   const [openSearchMenu, setOpenSearchMenu] = useState(false);
   const anchorRef = useRef(null);
-  const type = ACTION_TYPES.SET_SEARCH;
   const [selectedQuery, setSelectedQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [selectedItem, setSelectedItem] = useState("multi");
   const [optionsSearch, setOptionsSearch] = useState([]);
-
-  const params = useMemo(
-    () => ({
-      url: `search/${selectedItem}`,
-      query: selectedQuery || searchInput,
-      page: searchPage,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedQuery, selectedItem, searchPage, searchInput]
-  );
-
-  const paramsForSearchMenu = useMemo(
-    () => ({
-      url: `search/${selectedItem}`,
-      query: searchInput,
-      page: searchPage,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedItem, searchInput, searchPage]
-  );
 
   useEffect(() => {
     dataSearchMenu.length &&
@@ -135,15 +112,18 @@ export const Search = () => {
   }, [dataSearchMenu, selectedItem]);
 
   useEffect(() => {
-    const searchInputLength = searchInput.split("").length;
+    const searchInputLength = searchInput.length;
     searchInputLength > 4 &&
-      dispatch(fetchSearch("SET_SEARCH_MENU", paramsForSearchMenu));
+      dispatch(fetchSearchData(selectedItem, searchInput, searchPage));
     searchInputLength > 4 ? setOpenSearchMenu(true) : setOpenSearchMenu(false);
-  }, [dispatch, paramsForSearchMenu, searchInput, type]);
+  }, [dispatch, searchInput, searchPage, selectedItem]);
 
   useEffect(() => {
-    selectedQuery && dispatch(fetchSearch(type, params));
-  }, [dispatch, params, selectedQuery, type]);
+    selectedQuery &&
+      dispatch(
+        fetchSearchData(selectedItem, selectedQuery || searchInput, searchPage)
+      );
+  }, [dispatch, searchInput, searchPage, selectedItem, selectedQuery]);
 
   const handleClick = (e) => {
     e?.preventDefault();
@@ -154,7 +134,7 @@ export const Search = () => {
 
   const handleMenuItemClick = (event, item) => {
     setSelectedItem(item);
-    dispatch(setSearchType("SET_SEARCH_TYPE", item));
+    dispatch(setSearchType(item));
     setOpen(false);
   };
 
@@ -346,3 +326,4 @@ export const Search = () => {
     </Wrapper>
   );
 };
+export default Search;

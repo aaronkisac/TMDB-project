@@ -7,12 +7,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import { useSelector } from "react-redux";
-import Constants from "config/constants";
-import { useHistory } from "react-router-dom";
 import TablePagination from "@material-ui/core/TablePagination";
-import { useDispatch } from "react-redux";
-import { setSearchPage } from "store/actions/storeActions";
+
+import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { setSearchPage } from "store/actions";
+import Constants from "config/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,17 +42,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ListItems() {
+export default function ListItems() {
   const { API_KEY, IMAGE_URL } = Constants;
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const { results, total_results } = useSelector(
-    (store) => store.searchResult.searchList
-  );
-  const { searchType } = useSelector((store) => store.searchResult);
+  const { results, total_results } = useSelector((store) => {
+    return store.storeData.searchList;
+  });
+  const { searchType } = useSelector((store) => store.storeData);
   const handleDetailsPage = (goPage, id) => {
     history.push(`${goPage}/${id}`);
   };

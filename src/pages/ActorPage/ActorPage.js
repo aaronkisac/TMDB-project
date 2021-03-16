@@ -4,17 +4,16 @@ import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 import searchService from "services/searchService";
-import Show from "components/Show";
+import Person from "components/Person";
 
-export default function ShowPage() {
-  const { id, show } = useParams();
+export default function ActorPage() {
   const { enqueueSnackbar } = useSnackbar();
+  const { id } = useParams();
+  const [creditsList, setCreditsList] = useState([]);
+  const [actorDetails, setActorDetails] = useState({});
 
-  const [castsList, setCastsList] = useState([]);
-  const [showDetails, setShowDetails] = useState({});
-
-  const fetchShowCasts = async () => {
-    const [err, payload] = await to(searchService.getShowCasts(show, id));
+  const fetchActorCredits = async () => {
+    const [err, payload] = await to(searchService.getActorCredits(id));
     if (err) {
       enqueueSnackbar(`Casts list API :${err.message}`, {
         variant: "error",
@@ -25,13 +24,13 @@ export default function ShowPage() {
       });
       return;
     }
-    setCastsList(payload);
+    setCreditsList(payload);
   };
 
-  const fetchShowDetails = async () => {
-    const [err, payload] = await to(searchService.getShowDetails(show, id));
+  const fetchActorDetails = async () => {
+    const [err, payload] = await to(searchService.getActorDetails(id));
     if (err) {
-      enqueueSnackbar(`Show details API : ${err.message}`, {
+      enqueueSnackbar(`Actor details API : ${err.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
@@ -40,14 +39,14 @@ export default function ShowPage() {
       });
       return;
     }
-    setShowDetails(payload);
+    setActorDetails(payload);
   };
 
   useEffect(() => {
-    fetchShowDetails(show, id);
-    fetchShowCasts();
+    fetchActorDetails(id);
+    fetchActorCredits(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <Show {...showDetails} castsList={castsList} />;
+  return <Person {...actorDetails} creditsList={creditsList} />;
 }

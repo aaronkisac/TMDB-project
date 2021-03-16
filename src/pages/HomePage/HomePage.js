@@ -1,5 +1,5 @@
-import { ListItems } from "components";
-export function HomePage() {
+import ListItems from "components/ListItems";
+export default function HomePage() {
   return (
     <>
       <ListItems />
