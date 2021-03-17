@@ -76,62 +76,59 @@ export default function ListItems() {
     setCurrentPage(0);
     dispatch(setSearchPage("SET_SEARCH_PAGE", 1));
   };
+  const sliceStart = (currentPage * rowsPerPage) % 20;
+  const sliceEnd = ((currentPage * rowsPerPage) % 20) + rowsPerPage;
 
   return (
     <List data-testid="searchList" className={classes.root}>
-      {results
-        ?.slice(
-          (currentPage * rowsPerPage) % 20,
-          ((currentPage * rowsPerPage) % 20) + rowsPerPage
-        )
-        ?.map((item, index) => {
-          const { name, imgUrl, overView, date, type, id } = item;
-          return (
-            <React.Fragment key={item.id}>
-              <ListItem
-                onClick={() => handleDetailsPage(type, id)}
-                className={classes.listItem}
-                alignItems="flex-start"
-                key={`key-${index}-${item.id}`}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    className={classes.square}
-                    variant="square"
-                    alt={name}
-                    src={imgUrl}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={name || ""}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        className={classes.inline}
-                        color="textPrimary"
-                      >
-                        {date}
-                      </Typography>
-                      <br />
-                      <br />
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        className={classes.inline}
-                        color="textPrimary"
-                      >
-                        {overView || ""}
-                      </Typography>
-                    </React.Fragment>
-                  }
+      {results?.slice(sliceStart, sliceEnd)?.map((item, index) => {
+        const { name, imgUrl, overView, date, type, id } = item;
+        return (
+          <React.Fragment key={item.id}>
+            <ListItem
+              onClick={() => handleDetailsPage(type, id)}
+              className={classes.listItem}
+              alignItems="flex-start"
+              key={`key-${index}-${item.id}`}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  className={classes.square}
+                  variant="square"
+                  alt={name}
+                  src={imgUrl}
                 />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </React.Fragment>
-          );
-        })}
+              </ListItemAvatar>
+              <ListItemText
+                primary={name || ""}
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      className={classes.inline}
+                      color="textPrimary"
+                    >
+                      {date}
+                    </Typography>
+                    <br />
+                    <br />
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      className={classes.inline}
+                      color="textPrimary"
+                    >
+                      {overView || ""}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </React.Fragment>
+        );
+      })}
       {results && (
         <TablePagination
           component="div"
