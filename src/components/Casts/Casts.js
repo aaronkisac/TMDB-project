@@ -67,7 +67,7 @@ export default function Casts({ castsList }) {
   const classes = useStyles();
   const history = useHistory();
   const [creditsCount, setCreditsCount] = useState(10);
-  const isHasCasts = castsList.length;
+  const isHasCasts = castsList?.length;
 
   const handleDetailsPage = (id) => {
     history.push(`/person/${id}`);
@@ -79,7 +79,7 @@ export default function Casts({ castsList }) {
 
   return (
     <div className={classes.root}>
-      <GridList className={classes.gridList} cols={2}>
+      <GridList data-testid="castsCards" className={classes.gridList} cols={2}>
         {isHasCasts &&
           castsList?.slice(0, creditsCount).map((tile, index) => {
             const { imgPath, name, character } = tile;
@@ -94,6 +94,7 @@ export default function Casts({ castsList }) {
                 <Card className={classes.card}>
                   <CardActionArea>
                     <CardMedia
+                      data-testid={`castImage${index}`}
                       component="img"
                       alt={tile.name}
                       className={classes.media}
@@ -119,6 +120,7 @@ export default function Casts({ castsList }) {
           })}
         {isHasCasts > creditsCount ? (
           <GridListTile
+            data-testid="moreButton"
             className={classes.lastCard}
             onClick={handleMoreCasts}
             key="button1"

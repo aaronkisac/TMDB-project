@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Actor({  path, name, biography, creditsList }) {
+export default function Actor({ path, name, biography, creditsList }) {
   const classes = useStyles();
   const [isMore, setIsMore] = useState(false);
 
@@ -51,7 +51,12 @@ export default function Actor({  path, name, biography, creditsList }) {
         <Grid container spacing={2}>
           <Grid item>
             <ButtonBase disabled className={classes.image}>
-              <img className={classes.img} alt="complex" src={path} />
+              <img
+                data-testid="actorImage"
+                className={classes.img}
+                alt="complex"
+                src={path}
+              />
             </ButtonBase>
           </Grid>
           <Grid item xs={12} sm container>
@@ -66,6 +71,7 @@ export default function Actor({  path, name, biography, creditsList }) {
                   Biography
                 </Typography>
                 <Typography
+                  data-testid="actorDetails"
                   className={classes.biography}
                   onClick={handleMore}
                   variant="body2"

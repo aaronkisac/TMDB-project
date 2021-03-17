@@ -74,8 +74,12 @@ export default function Credits({ creditsList }) {
 
   return (
     <div className={classes.root}>
-      <GridList className={classes.gridList} cols={2}>
-        {creditsList.length &&
+      <GridList
+        data-testid="creditsCards"
+        className={classes.gridList}
+        cols={2}
+      >
+        {creditsList?.length &&
           creditsList?.slice(0, creditsCount).map((tile, index) => {
             return (
               <GridListTile
@@ -88,6 +92,7 @@ export default function Credits({ creditsList }) {
                 <Card className={classes.card}>
                   <CardActionArea>
                     <CardMedia
+                      data-testid={`creditImage${index}`}
                       component="img"
                       alt={tile.name}
                       className={classes.media}
@@ -111,8 +116,9 @@ export default function Credits({ creditsList }) {
               </GridListTile>
             );
           })}
-        {creditsList.length > creditsCount ? (
+        {creditsList?.length > creditsCount ? (
           <GridListTile
+            data-testid="moreCardButton"
             className={classes.lastCard}
             onClick={() => {
               setCreditsCount(creditsCount + 10);

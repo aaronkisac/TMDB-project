@@ -10,6 +10,7 @@ export default function ActorPage() {
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
   const [creditsList, setCreditsList] = useState([]);
+	console.log("​ActorPage -> creditsList", creditsList)
   const [actorDetails, setActorDetails] = useState({});
 
   const fetchActorCredits = async () => {
@@ -45,7 +46,7 @@ export default function ActorPage() {
   useEffect(() => {
     fetchActorDetails(id);
     fetchActorCredits(id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return <Actor {...actorDetails} creditsList={creditsList} />;

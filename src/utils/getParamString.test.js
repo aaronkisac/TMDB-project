@@ -1,8 +1,15 @@
-const getParamString = (params = {}) =>
-  Object.entries(params).reduce(
-    (acc, param) =>
-      param[0] !== "url" ? `${acc}&${param[0]}=${param[1]}` : acc,
-    `${params?.url}?`
-  );
+import getParamString from "./getParamString";
 
-export default getParamString;
+describe("getParamString function tested", () => {
+  const dataset = [
+    [{ a: "1", b: "2", c: "3", url: "url" }, "url?&a=1&b=2&c=3"],
+    [{ x: "9", y: "8", z: "7", url: "http" }, "http?&x=9&y=8&z=7"],
+  ];
+  test.each(dataset)(
+    "Given %p in random case, returns %p in start case",
+    (inputText, expectedText) => {
+      const formattedText = getParamString(inputText);
+      expect(formattedText).toEqual(expectedText);
+    }
+  );
+});
