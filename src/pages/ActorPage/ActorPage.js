@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 import searchService from "services/searchService";
-import Person from "components/Person";
+import Actor from "components/Actor";
 
 export default function ActorPage() {
   const { enqueueSnackbar } = useSnackbar();
@@ -45,8 +45,8 @@ export default function ActorPage() {
   useEffect(() => {
     fetchActorDetails(id);
     fetchActorCredits(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-  return <Person {...actorDetails} creditsList={creditsList} />;
+  return <Actor {...actorDetails} creditsList={creditsList} />;
 }

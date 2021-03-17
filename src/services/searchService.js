@@ -10,9 +10,46 @@ class SearchService {
   }
 
   getSearchData = async (params) => {
-    let query = getParamString({ api_key: this.apiKey, ...params });
+    const { url } = params;
+    let query = getParamString({
+      api_key: this.apiKey,
+      ...params,
+      url: `search/${params.url}`,
+    });
 
-    return axios.get(`${this.baseUrl}${query}`).then((payload) => payload.data);
+    return axios.get(`${this.baseUrl}${query}`).then((payload) => {
+      return {
+        page: payload.data.page,
+        total_pages: payload.data.total_pages,
+        total_results: payload.data.total_results,
+        results: payload.data.results.map((item) => ({
+          id: item.id,
+          name: item.name || item.title,
+          type: url !== "multi" ? url : item.media_type,
+          imgUrl:
+            item.profile_path || item.poster_path
+              ? `${this.imgUrl}w185${
+                  item.profile_path || item.poster_path
+                }?api_key=${this.apiKey}`
+              : "/images/Not-available4.png",
+          overView:
+            item.overview ||
+            item.known_for?.reduce(
+              (acc, el) =>
+                acc !== "Known for:"
+                  ? `${acc}, ${el.title || el.name}`
+                  : `${acc} ${el.title || el.name}`,
+              "Known for:"
+            ),
+          date:
+            item.release_date || item.first_air_date
+              ? new Date(item.release_date || item.first_air_date)
+                  ?.toLocaleString()
+                  ?.split(",")[0]
+              : item.known_for_department,
+        })),
+      };
+    });
   };
 
   getActorDetails = async (id) => {

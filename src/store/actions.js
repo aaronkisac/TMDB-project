@@ -5,11 +5,12 @@ import { ACTION_TYPES } from "store/reducer";
 export const fetchSearchData = (url, query, page) => async (dispatch) => {
   const [err, payload] = await to(
     searchService.getSearchData({
-      url: `search/${url}`,
+      url,
       query,
       page,
     })
   );
+
   if (err) {
     return;
   }
@@ -17,7 +18,7 @@ export const fetchSearchData = (url, query, page) => async (dispatch) => {
   dispatch({ type: ACTION_TYPES.SET_SEARCH, payload });
 };
 
-export const setSearchType = (payload) => async (dispatch) => {
+export const setActionSearchType = (payload) => async (dispatch) => {
   dispatch({ type: ACTION_TYPES.SET_SEARCH_TYPE, payload });
 };
 

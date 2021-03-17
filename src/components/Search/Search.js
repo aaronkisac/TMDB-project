@@ -1,23 +1,31 @@
-import { fade, makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
-import Toolbar from "@material-ui/core/Toolbar";
-import InputBase from "@material-ui/core/InputBase";
-import SearchIcon from "@material-ui/icons/Search";
-import Button from "@material-ui/core/Button";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
 import Paper from "@material-ui/core/Paper";
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
 import Popper from "@material-ui/core/Popper";
+import Toolbar from "@material-ui/core/Toolbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import SearchIcon from "@material-ui/icons/Search";
+import InputBase from "@material-ui/core/InputBase";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 
-import { useEffect, useState, useRef } from "react";
+import to from "await-to-js";
+import { useSnackbar } from "notistack";
 import { useHistory } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSearchData, setSearchType } from "store/actions";
+
+import searchService from "services/searchService";
+import {
+  fetchSearchData,
+  setActionSearchType,
+  setSearchPage,
+} from "store/actions";
 import { StyledForm, Wrapper } from "./Search.styles";
 
 const options = [
@@ -88,60 +96,66 @@ const Search = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { dataSearchMenu, searchPage } = useSelector(
-    (store) => store.storeData
-  );
-  const [open, setOpen] = useState(false);
-  const [openSearchMenu, setOpenSearchMenu] = useState(false);
   const anchorRef = useRef(null);
-  const [selectedQuery, setSelectedQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [selectedItem, setSelectedItem] = useState("multi");
+  const { enqueueSnackbar } = useSnackbar();
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [openSearchMenu, setOpenSearchMenu] = useState(false);
+  const [searchType, setSearchType] = useState("multi");
+
   const [optionsSearch, setOptionsSearch] = useState([]);
+  const { searchPage } = useSelector((store) => store.storeData);
+
+  const fetchOptionsSearch = async () => {
+    const [err, payload] = await to(
+      searchService.getSearchData({
+        url: searchType,
+        query: inputValue,
+        page: searchPage,
+      })
+    );
+    if (err) {
+      enqueueSnackbar(`Search list API :${err.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      return;
+    }
+    setOptionsSearch(
+      payload.results
+        .map((item) => ({
+          label: item.name,
+          id: item.id,
+          media_type: item.type,
+        }))
+        .slice(0, 12)
+    );
+  };
 
   useEffect(() => {
-    dataSearchMenu.length &&
-      setOptionsSearch(
-        selectedItem === "multi"
-          ? dataSearchMenu?.slice(0, 12)
-          : dataSearchMenu?.slice(0, 12).map((item) => ({
-              ...item,
-              media_type: selectedItem,
-            }))
-      );
-  }, [dataSearchMenu, selectedItem]);
+    dispatch(fetchSearchData(searchType, inputValue || "a", searchPage));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchPage]);
 
-  useEffect(() => {
-    const searchInputLength = searchInput.length;
-    searchInputLength > 4 &&
-      dispatch(fetchSearchData(selectedItem, searchInput, searchPage));
-    searchInputLength > 4 ? setOpenSearchMenu(true) : setOpenSearchMenu(false);
-  }, [dispatch, searchInput, searchPage, selectedItem]);
-
-  useEffect(() => {
-    selectedQuery &&
-      dispatch(
-        fetchSearchData(selectedItem, selectedQuery || searchInput, searchPage)
-      );
-  }, [dispatch, searchInput, searchPage, selectedItem, selectedQuery]);
-
-  const handleClick = (e) => {
+  const handleSubmit = (e) => {
     e?.preventDefault();
-    setSelectedQuery(searchInput);
+    dispatch(fetchSearchData(searchType, inputValue, 1));
+    dispatch(setSearchPage(1));
     history.push("/");
-    setSearchInput("");
   };
 
   const handleMenuItemClick = (event, item) => {
-    setSelectedItem(item);
-    dispatch(setSearchType(item));
+    setSearchType(item);
+    dispatch(setActionSearchType(item));
     setOpen(false);
   };
 
   const handleMenuItemClickForSearchMenu = (id, type) => {
     setOpenSearchMenu(false);
     history.push(`/${type}/${id}`);
-    setSearchInput("");
   };
 
   const handleToggle = () => {
@@ -163,7 +177,11 @@ const Search = () => {
   };
 
   const handleChange = (e) => {
-    setSearchInput(e.target.value);
+    setInputValue(e.target.value);
+    if (e.target.value.length > 4) {
+      fetchOptionsSearch();
+      setOpenSearchMenu(true);
+    }
   };
 
   return (
@@ -190,7 +208,7 @@ const Search = () => {
                   aria-label="split button"
                 >
                   <Button onClick={handleToggle}>
-                    {options.find((item) => item.id === selectedItem).label}
+                    {options.find((item) => item.id === searchType).label}
                   </Button>
                   <Button
                     color="primary"
@@ -252,7 +270,7 @@ const Search = () => {
                   <InputBase
                     autoFocus
                     placeholder="Search for a movie, tv show, person......"
-                    value={searchInput}
+                    value={inputValue}
                     classes={{
                       root: classes.inputRoot,
                       input: classes.inputInput,
@@ -264,7 +282,6 @@ const Search = () => {
                 <Popper
                   open={openSearchMenu}
                   anchorEl={anchorRef.current}
-                  role={undefined}
                   transition
                   disablePortal
                   className={classes.searchMenu}
@@ -290,7 +307,7 @@ const Search = () => {
                             {optionsSearch.map((option) => (
                               <MenuItem
                                 key={option.id}
-                                selected={option.id === selectedItem}
+                                selected={option.id === searchType}
                                 onClick={() =>
                                   handleMenuItemClickForSearchMenu(
                                     option.id,
@@ -314,7 +331,7 @@ const Search = () => {
                   color="primary"
                   className={classes.submitButton}
                   type="submit"
-                  onClick={handleClick}
+                  onClick={handleSubmit}
                 >
                   Search
                 </Button>

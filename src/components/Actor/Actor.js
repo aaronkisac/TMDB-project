@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Person({  path, name, biography, creditsList }) {
+export default function Actor({  path, name, biography, creditsList }) {
   const classes = useStyles();
   const [isMore, setIsMore] = useState(false);
 

@@ -47,7 +47,7 @@ export default function ShowPage() {
     fetchShowDetails(show, id);
     fetchShowCasts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   return <Show {...showDetails} castsList={castsList} />;
 }
