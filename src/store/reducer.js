@@ -7,7 +7,7 @@ export const ACTION_TYPES = {
 };
 
 export const initialState = {
-  searchList: "",
+  searchList: [],
   searchPage: "",
   searchType: "",
 };
@@ -21,7 +21,7 @@ const storeData = (state = initialState, action) =>
       case ACTION_TYPES.SET_SEARCH_TYPE:
         draft.searchType = action.payload;
         break;
-      
+
       case ACTION_TYPES.SET_SEARCH_PAGE:
         draft.searchPage = action.payload;
         break;
