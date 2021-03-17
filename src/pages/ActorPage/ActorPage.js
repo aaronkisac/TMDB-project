@@ -10,7 +10,6 @@ export default function ActorPage() {
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
   const [creditsList, setCreditsList] = useState([]);
-	console.log("​ActorPage -> creditsList", creditsList)
   const [actorDetails, setActorDetails] = useState({});
 
   const fetchActorCredits = async () => {
