@@ -58,7 +58,7 @@ export default function Show({
         <Grid container spacing={2}>
           <Grid item>
             <div className={classes.image}>
-              <img className={classes.img} alt="complex" src={path} />
+              <img data-testid="showImage"className={classes.img} alt="complex" src={path} />
             </div>
           </Grid>
           <Grid item xs={12} sm container>
@@ -78,6 +78,7 @@ export default function Show({
                   Overview
                 </Typography>
                 <Typography
+                  data-testid="showDetails"
                   className={classes.overview}
                   onClick={handleMore}
                   variant="body2"

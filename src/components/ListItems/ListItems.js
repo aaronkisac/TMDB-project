@@ -78,7 +78,7 @@ export default function ListItems() {
   };
 
   return (
-    <List className={classes.root}>
+    <List data-testid="searchList" className={classes.root}>
       {results
         ?.slice(
           (currentPage * rowsPerPage) % 20,
