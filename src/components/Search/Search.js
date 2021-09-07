@@ -196,7 +196,8 @@ const Search = () => {
                   className={classes.title}
                   variant="h6"
                 >
-                  TMDB
+                  Harun
+                  {/* TMDB */}
                 </MenuItem>
               </Grid>
 
