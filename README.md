@@ -45,6 +45,6 @@ This project was built using these technologies.
 
 ​Harun Kisac
 
-- Github: [@harunkisacuk](https://github.com/aaronkisac)
+- Github: [@aaronkisac](https://github.com/aaronkisac)
 - Linkedin: [Aaron Kisac](https://www.linkedin.com/in/aaron-kisac)
 - E-mail: harunk3uk@gmail.com
